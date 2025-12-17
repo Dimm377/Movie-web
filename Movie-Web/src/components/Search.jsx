@@ -1,11 +1,3 @@
-// const person = {
-//   name: "Wednesday Addams",
-//   age: 16,
-//   location: "Nevermore Academy",
-// };
-
-// const { name, age, location } = person;
-
 const Search = ({ searchWeb, setSearchWeb }) => {
   return (
     <div className="search text-white">

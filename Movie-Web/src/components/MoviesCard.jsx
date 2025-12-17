@@ -1,13 +1,15 @@
-const moviesCard = ({
-  movie: { title, poster_path, vote_average, release_date, original_language },
+import { Link } from "react-router-dom";
+
+const MoviesCard = ({
+  movie: { id, title, poster_path, vote_average, release_date, original_language },
 }) => {
   return (
-    <div className="movie-card">
+    <Link to={`/movie/${id}`} className="movie-card">
       <img
         src={
           poster_path
             ? `https://image.tmdb.org/t/p/w500${poster_path}`
-            : "no-movie.png"
+            : "/no-movie.png"
         }
         alt={title}
       ></img>
@@ -16,7 +18,7 @@ const moviesCard = ({
 
       <div className="content">
         <div className="rating">
-          <img src="star.svg" alt="rating" />
+          <img src="/star.svg" alt="rating" />
           <p>{vote_average ? vote_average.toFixed(1) : "N/A"}</p>
         </div>
         <span>•</span>
@@ -26,8 +28,9 @@ const moviesCard = ({
           {release_date ? release_date.split("-")[0] : "N/A"}
         </p>
       </div>
-    </div>
+    </Link>
   );
 };
 
-export default moviesCard;
+export default MoviesCard;
+
