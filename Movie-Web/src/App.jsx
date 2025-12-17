@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import Search from "./components/Search.jsx";
 import Spinner from "./components/Spinner.jsx";
 import MoviesCard from "./components/moviesCard.jsx";
+import heroImage from "./assets/hero.png";
+import heroBg from "./assets/hero-bg.png";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -21,11 +23,13 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setisLoading] = useState(false);
-  const fetchMovies = async () => {
+  const fetchMovies = async (query = "") => {
     setisLoading(true);
     setErrorMessage("");
     try {
-      const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+      const endpoint = query
+        ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
+        : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
       const response = await fetch(endpoint, API_OPTIONS);
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -49,38 +53,54 @@ const App = () => {
   };
 
   useEffect(() => {
-    fetchMovies();
-  }, []);
+    fetchMovies(searchWeb);
+  }, [searchWeb]);
 
   return (
-    <main>
-      <div className="picture" />
-      <div className="wrapper">
-        <header>
-          <img src="./assets/hero.png" alt="Hero" />
-          <h1 className="text-white font-bold text-6xl">
-            <span className="text-red-400">Next-Gen</span> Movie Interface.
-          </h1>
-          <Search searchWeb={searchWeb} setSearchWeb={setSearchWeb} />
-        </header>
-        <section className="all-movies">
-          <h2 className="mt-15">All Movies</h2>
-          {isLoading ? (
-            <Spinner />
-          ) : errorMessage ? (
-            <p className="text-red-500">{errorMessage}</p>
-          ) : movieList.length === 0 ? (
-            <p className="text-white">
-              No movies found. Check console for errors.
-            </p>
-          ) : (
-            <ul>
-              {movieList.map((movie) => (
-                <MoviesCard key={movie.id} movie={movie} />
-              ))}
-            </ul>
-          )}
-        </section>
+    <main className="min-h-screen bg-primary">
+      {/* Hero Section with background */}
+      <div
+        className="min-h-[60vh] w-full"
+        style={{
+          backgroundImage: `url(${heroBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="picture" />
+        <div className="wrapper">
+          <header>
+            <img src={heroImage} alt="Hero" />
+            <h1 className="text-white font-bold text-6xl">
+              <span className="text-red-400">Next-Gen</span> Movie Interface
+            </h1>
+            <Search searchWeb={searchWeb} setSearchWeb={setSearchWeb} />
+          </header>
+        </div>
+      </div>
+
+      {/* Movies Section without background */}
+      <div className="bg-primary">
+        <div className="wrapper">
+          <section className="all-movies">
+            <h2 className="mt-15">All Movies</h2>
+            {isLoading ? (
+              <Spinner />
+            ) : errorMessage ? (
+              <p className="text-red-500">{errorMessage}</p>
+            ) : movieList.length === 0 ? (
+              <p className="text-white">
+                No movies found. Check console for errors.
+              </p>
+            ) : (
+              <ul>
+                {movieList.map((movie) => (
+                  <MoviesCard key={movie.id} movie={movie} />
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
       </div>
     </main>
   );
