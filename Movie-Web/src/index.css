@@ -59,13 +59,28 @@
 
   .trending {
     @apply mt-20;
+    overflow: hidden;
 
     & ul {
-      @apply flex flex-row overflow-y-auto gap-5 -mt-10 w-full hide-scrollbar;
+      display: flex;
+      flex-direction: row;
+      gap: 1.25rem;
+      margin-top: -2.5rem;
+      padding-bottom: 1rem;
+      animation: marquee 20s linear infinite;
+      width: max-content;
+    }
+
+    & ul:hover {
+      animation-play-state: running;
     }
 
     & ul li {
-      @apply min-w-[230px] flex flex-row items-center;
+      min-width: 230px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-shrink: 0;
     }
 
     & ul li p {
@@ -76,6 +91,15 @@
       @apply w-[127px] h-[163px] rounded-lg object-cover -ml-3.5;
     }
   }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
 
   .search {
     @apply w-full bg-light-100/5 px-4 py-3 rounded-lg mt-10 max-w-3xl mx-auto;

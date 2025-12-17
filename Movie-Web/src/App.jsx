@@ -1,6 +1,6 @@
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useState, useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import Search from "./components/Search.jsx";
 import Spinner from "./components/Spinner.jsx";
 import MoviesCard from "./components/MoviesCard.jsx";
@@ -8,8 +8,6 @@ import TrendingCard from "./components/TrendingCard.jsx";
 import heroImage from "./assets/hero.png";
 import heroBg from "./assets/hero-bg.png";
 import { useDebounce } from "react-use";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -30,7 +28,24 @@ const App = () => {
   const [isLoading, setisLoading] = useState(false);
   const [debounceSearchWeb, setDebounceSearchWeb] = useState("");
 
-  const heroRef = useRef(null);
+  // Initialize AOS
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      easing: "ease-out-cubic",
+      once: true,
+      offset: 50,
+    });
+  }, []);
+
+  // Refresh AOS when movies load
+  useEffect(() => {
+    if (movieList.length > 0) {
+      AOS.refresh();
+    }
+  }, [movieList]);
+
+  // No JS animation needed - using CSS marquee animation
 
   useDebounce(
     () => {
@@ -39,98 +54,6 @@ const App = () => {
     500,
     [searchWeb]
   );
-
-  // GSAP Hero Animation - runs once on mount
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline();
-
-      tl.fromTo(
-        ".hero-image",
-        { opacity: 0, scale: 0.8, y: 50 },
-        { opacity: 1, scale: 1, y: 0, duration: 1, ease: "power3.out" }
-      )
-        .fromTo(
-          ".hero-title",
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-          "-=0.5"
-        )
-        .fromTo(
-          ".search",
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-          "-=0.4"
-        );
-    }, heroRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  // GSAP Trending Animation
-  useLayoutEffect(() => {
-    if (trendingMovies.length === 0) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".trending h2",
-        { opacity: 0, x: -50 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: "power2.out",
-        }
-      );
-
-      gsap.fromTo(
-        ".trending li",
-        { opacity: 0, x: 100 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.6,
-          stagger: 0.15,
-          ease: "power2.out",
-        }
-      );
-    });
-
-    return () => ctx.revert();
-  }, [trendingMovies]);
-
-  // GSAP Movies Grid Animation - Optimized for performance
-  useLayoutEffect(() => {
-    if (movieList.length === 0 || isLoading) return;
-
-    // Use requestAnimationFrame for smoother animation start
-    const rafId = requestAnimationFrame(() => {
-      const cards = document.querySelectorAll(".movie-card");
-      if (cards.length === 0) return;
-
-      // Only animate first 8 cards for performance
-      const visibleCards = Array.from(cards).slice(0, 8);
-      
-      gsap.fromTo(
-        visibleCards,
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.3,
-          stagger: 0.05,
-          ease: "power1.out",
-        }
-      );
-
-      // Set remaining cards to visible immediately
-      Array.from(cards).slice(8).forEach(card => {
-        gsap.set(card, { opacity: 1, y: 0 });
-      });
-    });
-
-    return () => cancelAnimationFrame(rafId);
-  }, [movieList, isLoading]);
 
   const fetchMovies = async (query = "") => {
     setisLoading(true);
@@ -187,7 +110,6 @@ const App = () => {
     <main className="min-h-screen bg-primary">
       {/* Hero Section with background */}
       <div
-        ref={heroRef}
         className="min-h-[60vh] w-full"
         style={{
           backgroundImage: `url(${heroBg})`,
@@ -198,11 +120,23 @@ const App = () => {
         <div className="picture" />
         <div className="wrapper">
           <header>
-            <img src={heroImage} alt="Hero" className="hero-image" />
-            <h1 className="hero-title text-white font-bold text-6xl">
+            <img
+              src={heroImage}
+              alt="Hero"
+              className="hero-image"
+              data-aos="zoom-in"
+              data-aos-duration="1000"
+            />
+            <h1
+              className="hero-title text-white font-bold text-6xl"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
               <span className="text-red-400">Next-Gen</span> Movie Interface
             </h1>
-            <Search searchWeb={searchWeb} setSearchWeb={setSearchWeb} />
+            <div data-aos="fade-up" data-aos-delay="400">
+              <Search searchWeb={searchWeb} setSearchWeb={setSearchWeb} />
+            </div>
           </header>
         </div>
       </div>
@@ -213,10 +147,15 @@ const App = () => {
           {/* Trending Section */}
           {trendingMovies.length > 0 && (
             <section className="trending">
-              <h2>Trending Movies</h2>
+              <h2 data-aos="fade-right">Trending Movies</h2>
               <ul>
+                {/* Original items */}
                 {trendingMovies.map((movie, index) => (
                   <TrendingCard key={movie.id} movie={movie} index={index} />
+                ))}
+                {/* Duplicated items for seamless loop */}
+                {trendingMovies.map((movie, index) => (
+                  <TrendingCard key={`dup-${movie.id}`} movie={movie} index={index} />
                 ))}
               </ul>
             </section>
@@ -224,7 +163,9 @@ const App = () => {
 
           {/* All Movies Section */}
           <section className="all-movies">
-            <h2 className="mt-15">All Movies</h2>
+            <h2 className="mt-15" data-aos="fade-right">
+              All Movies
+            </h2>
             {isLoading ? (
               <Spinner />
             ) : errorMessage ? (
@@ -235,8 +176,8 @@ const App = () => {
               </p>
             ) : (
               <ul>
-                {movieList.map((movie) => (
-                  <MoviesCard key={movie.id} movie={movie} />
+                {movieList.map((movie, index) => (
+                  <MoviesCard key={movie.id} movie={movie} index={index} />
                 ))}
               </ul>
             )}

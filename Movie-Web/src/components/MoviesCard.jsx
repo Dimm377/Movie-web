@@ -1,10 +1,23 @@
 import { Link } from "react-router-dom";
 
 const MoviesCard = ({
-  movie: { id, title, poster_path, vote_average, release_date, original_language },
+  movie: {
+    id,
+    title,
+    poster_path,
+    vote_average,
+    release_date,
+    original_language,
+  },
+  index,
 }) => {
   return (
-    <Link to={`/movie/${id}`} className="movie-card">
+    <Link
+      to={`/movie/${id}`}
+      className="movie-card"
+      data-aos="fade-up"
+      data-aos-delay={index < 8 ? index * 50 : 0}
+    >
       <img
         src={
           poster_path
@@ -12,7 +25,8 @@ const MoviesCard = ({
             : "/no-movie.png"
         }
         alt={title}
-      ></img>
+        loading="lazy"
+      />
       <div className="mt-4" />
       <h3 className="text-white font-semibold text-lg">{title}</h3>
 
@@ -24,13 +38,10 @@ const MoviesCard = ({
         <span>•</span>
         <p className="lang">{original_language}</p>
         <span>•</span>
-        <p className="year">
-          {release_date ? release_date.split("-")[0] : "N/A"}
-        </p>
+        <p className="year">{release_date ? release_date.split("-")[0] : "N/A"}</p>
       </div>
     </Link>
   );
 };
 
 export default MoviesCard;
-

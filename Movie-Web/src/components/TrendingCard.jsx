@@ -4,7 +4,7 @@ const TrendingCard = ({ movie, index }) => {
   const { id, title, poster_path } = movie;
 
   return (
-    <li>
+    <li data-aos="fade-left" data-aos-delay={index * 100}>
       <Link to={`/movie/${id}`} className="trending-card">
         <p className="fancy-text">{index + 1}</p>
         <img
@@ -14,6 +14,7 @@ const TrendingCard = ({ movie, index }) => {
               : "/no-movie.png"
           }
           alt={title}
+          loading="lazy"
         />
       </Link>
     </li>

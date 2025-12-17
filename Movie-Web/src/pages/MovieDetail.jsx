@@ -1,6 +1,6 @@
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import gsap from "gsap";
+import AOS from "aos";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -19,7 +19,6 @@ const MovieDetail = () => {
   const [movie, setMovie] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const containerRef = useRef(null);
 
   useEffect(() => {
     const fetchMovieDetail = async () => {
@@ -42,86 +41,12 @@ const MovieDetail = () => {
     fetchMovieDetail();
   }, [id]);
 
-  // GSAP Cinematic Entrance Animation
-  useLayoutEffect(() => {
-    if (!movie || isLoading) return;
-
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-      // Backdrop fade in
-      tl.fromTo(
-        ".movie-backdrop",
-        { opacity: 0, scale: 1.1 },
-        { opacity: 1, scale: 1, duration: 1.2 }
-      )
-        // Back button slide in
-        .fromTo(
-          ".back-button",
-          { opacity: 0, x: -30 },
-          { opacity: 1, x: 0, duration: 0.5 },
-          "-=0.8"
-        )
-        // Poster cinematic reveal
-        .fromTo(
-          ".movie-poster",
-          { opacity: 0, x: -80 },
-          { opacity: 1, x: 0, duration: 0.8 },
-          "-=0.4"
-        )
-        // Title reveal
-        .fromTo(
-          ".movie-title",
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 0.8 },
-          "-=0.5"
-        )
-        // Tagline
-        .fromTo(
-          ".movie-tagline",
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.5 },
-          "-=0.4"
-        )
-        // Meta info stagger
-        .fromTo(
-          ".movie-meta > *",
-          { opacity: 0, y: 15 },
-          { opacity: 1, y: 0, stagger: 0.1, duration: 0.4 },
-          "-=0.3"
-        )
-        // Genre badges stagger
-        .fromTo(
-          ".genre-badge",
-          { opacity: 0, scale: 0.8, y: 20 },
-          { opacity: 1, scale: 1, y: 0, stagger: 0.08, duration: 0.4 },
-          "-=0.2"
-        )
-        // Overview section
-        .fromTo(
-          ".movie-overview",
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 0.6 },
-          "-=0.2"
-        )
-        // Cast items stagger
-        .fromTo(
-          ".cast-item",
-          { opacity: 0, x: 30 },
-          { opacity: 1, x: 0, stagger: 0.1, duration: 0.4 },
-          "-=0.3"
-        )
-        // Trailer button bounce in
-        .fromTo(
-          ".trailer-button",
-          { opacity: 0, scale: 0.5 },
-          { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)" },
-          "-=0.2"
-        );
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, [movie, isLoading]);
+  // Refresh AOS when movie loads
+  useEffect(() => {
+    if (movie) {
+      AOS.refresh();
+    }
+  }, [movie]);
 
   if (isLoading) {
     return (
@@ -162,10 +87,12 @@ const MovieDetail = () => {
   const topCast = credits?.cast?.slice(0, 6) || [];
 
   return (
-    <main className="min-h-screen bg-primary" ref={containerRef}>
+    <main className="min-h-screen bg-primary">
       {/* Backdrop */}
       <div
         className="movie-backdrop"
+        data-aos="fade"
+        data-aos-duration="1200"
         style={{
           backgroundImage: backdrop_path
             ? `url(https://image.tmdb.org/t/p/original${backdrop_path})`
@@ -177,7 +104,12 @@ const MovieDetail = () => {
 
       <div className="movie-detail-wrapper">
         {/* Back Button */}
-        <button onClick={() => navigate(-1)} className="back-button">
+        <button
+          onClick={() => navigate(-1)}
+          className="back-button"
+          data-aos="fade-right"
+          data-aos-delay="200"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -196,7 +128,7 @@ const MovieDetail = () => {
 
         <div className="movie-detail-content">
           {/* Poster */}
-          <div className="movie-poster">
+          <div className="movie-poster" data-aos="fade-right" data-aos-delay="300">
             <img
               src={
                 poster_path
@@ -209,10 +141,16 @@ const MovieDetail = () => {
 
           {/* Info */}
           <div className="movie-info">
-            <h1 className="movie-title">{title}</h1>
-            {tagline && <p className="movie-tagline">"{tagline}"</p>}
+            <h1 className="movie-title" data-aos="fade-up" data-aos-delay="400">
+              {title}
+            </h1>
+            {tagline && (
+              <p className="movie-tagline" data-aos="fade-up" data-aos-delay="500">
+                "{tagline}"
+              </p>
+            )}
 
-            <div className="movie-meta">
+            <div className="movie-meta" data-aos="fade-up" data-aos-delay="600">
               <div className="rating-badge">
                 <img src="/star.svg" alt="rating" />
                 <span>{vote_average?.toFixed(1)}</span>
@@ -224,7 +162,7 @@ const MovieDetail = () => {
             </div>
 
             {/* Genres */}
-            <div className="movie-genres">
+            <div className="movie-genres" data-aos="fade-up" data-aos-delay="700">
               {genres?.map((genre) => (
                 <span key={genre.id} className="genre-badge">
                   {genre.name}
@@ -233,14 +171,14 @@ const MovieDetail = () => {
             </div>
 
             {/* Overview */}
-            <div className="movie-overview">
+            <div className="movie-overview" data-aos="fade-up" data-aos-delay="800">
               <h3>Overview</h3>
               <p>{overview}</p>
             </div>
 
             {/* Cast */}
             {topCast.length > 0 && (
-              <div className="movie-cast">
+              <div className="movie-cast" data-aos="fade-up" data-aos-delay="900">
                 <h3>Top Cast</h3>
                 <div className="cast-list">
                   {topCast.map((actor) => (
@@ -265,7 +203,7 @@ const MovieDetail = () => {
 
             {/* Trailer */}
             {trailer && (
-              <div className="movie-trailer">
+              <div className="movie-trailer" data-aos="zoom-in" data-aos-delay="1000">
                 <a
                   href={`https://www.youtube.com/watch?v=${trailer.key}`}
                   target="_blank"
