@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import Search from "./components/Search.jsx";
+import Spinner from "./components/Spinner.jsx";
+import MoviesCard from "./components/moviesCard.jsx";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -17,7 +19,7 @@ const App = () => {
   const [searchWeb, setSearchWeb] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [movielist, setMovielist] = useState([]);
+  const [movieList, setMovieList] = useState([]);
   const [isLoading, setisLoading] = useState(false);
   const fetchMovies = async () => {
     setisLoading(true);
@@ -33,11 +35,11 @@ const App = () => {
         console.log("Fetched movies:", data.results);
       } else {
         setErrorMessage("No movies found.");
-        setMovielist([]);
+        setMovieList([]);
         return;
       }
 
-      setMovielist(data.results || []);
+      setMovieList(data.results || []);
     } catch (error) {
       console.error("Error fetching movies:", error);
       setErrorMessage("Failed to fetch movies. Please try again later.");
@@ -55,26 +57,28 @@ const App = () => {
       <div className="picture" />
       <div className="wrapper">
         <header>
-          <img src="./hero.png" alt="Hero" />
+          <img src="./assets/hero.png" alt="Hero" />
           <h1 className="text-white font-bold text-6xl">
-            <span className="text-gradient">Next-Gen</span> Movie Interface.
+            <span className="text-red-400">Next-Gen</span> Movie Interface.
           </h1>
           <Search searchWeb={searchWeb} setSearchWeb={setSearchWeb} />
         </header>
         <section className="all-movies">
-          <h2>All Movies</h2>
+          <h2 className="mt-15">All Movies</h2>
           {isLoading ? (
-            <p className="text-white">Loading movies...</p>
+            <Spinner />
           ) : errorMessage ? (
             <p className="text-red-500">{errorMessage}</p>
+          ) : movieList.length === 0 ? (
+            <p className="text-white">
+              No movies found. Check console for errors.
+            </p>
           ) : (
-            <div>
-              {movielist.map((movie) => (
-                <div key={movie.id}>
-                  <p className="text-white">{movie.title}</p>
-                </div>
+            <ul>
+              {movieList.map((movie) => (
+                <MoviesCard key={movie.id} movie={movie} />
               ))}
-            </div>
+            </ul>
           )}
         </section>
       </div>
