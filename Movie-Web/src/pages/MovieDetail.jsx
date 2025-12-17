@@ -48,6 +48,16 @@ const MovieDetail = () => {
     }
   }, [movie]);
 
+  // Dynamic document title
+  useEffect(() => {
+    if (movie?.title) {
+      document.title = `${movie.title} | Dimm's Movie`;
+    }
+    return () => {
+      document.title = "Dimm's Movie";
+    };
+  }, [movie]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-primary flex items-center justify-center">
@@ -88,19 +98,31 @@ const MovieDetail = () => {
 
   return (
     <main className="min-h-screen bg-primary">
-      {/* Backdrop */}
-      <div
-        className="movie-backdrop"
-        data-aos="fade"
-        data-aos-duration="1200"
-        style={{
-          backgroundImage: backdrop_path
-            ? `url(https://image.tmdb.org/t/p/original${backdrop_path})`
-            : "none",
-        }}
-      >
-        <div className="backdrop-overlay" />
-      </div>
+      {/* Video Background or Image Backdrop */}
+      {trailer ? (
+        <div className="video-backdrop">
+          <iframe
+            src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=1&loop=1&playlist=${trailer.key}&controls=0&showinfo=0&rel=0&modestbranding=1`}
+            title="Background Trailer"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
+          <div className="backdrop-overlay" />
+        </div>
+      ) : (
+        <div
+          className="movie-backdrop"
+          data-aos="fade"
+          data-aos-duration="1200"
+          style={{
+            backgroundImage: backdrop_path
+              ? `url(https://image.tmdb.org/t/p/original${backdrop_path})`
+              : "none",
+          }}
+        >
+          <div className="backdrop-overlay" />
+        </div>
+      )}
 
       <div className="movie-detail-wrapper">
         {/* Back Button */}
@@ -128,7 +150,7 @@ const MovieDetail = () => {
 
         <div className="movie-detail-content">
           {/* Poster */}
-          <div className="movie-poster" data-aos="fade-right" data-aos-delay="300">
+          <div className="movie-poster" data-aos="fade-right" data-aos-delay="50">
             <img
               src={
                 poster_path
@@ -141,16 +163,16 @@ const MovieDetail = () => {
 
           {/* Info */}
           <div className="movie-info">
-            <h1 className="movie-title" data-aos="fade-up" data-aos-delay="400">
+            <h1 className="movie-title" data-aos="fade-up" data-aos-delay="100">
               {title}
             </h1>
             {tagline && (
-              <p className="movie-tagline" data-aos="fade-up" data-aos-delay="500">
+              <p className="movie-tagline" data-aos="fade-up" data-aos-delay="120">
                 "{tagline}"
               </p>
             )}
 
-            <div className="movie-meta" data-aos="fade-up" data-aos-delay="600">
+            <div className="movie-meta" data-aos="fade-up" data-aos-delay="140">
               <div className="rating-badge">
                 <img src="/star.svg" alt="rating" />
                 <span>{vote_average?.toFixed(1)}</span>
@@ -162,7 +184,7 @@ const MovieDetail = () => {
             </div>
 
             {/* Genres */}
-            <div className="movie-genres" data-aos="fade-up" data-aos-delay="700">
+            <div className="movie-genres" data-aos="fade-up" data-aos-delay="160">
               {genres?.map((genre) => (
                 <span key={genre.id} className="genre-badge">
                   {genre.name}
@@ -171,14 +193,14 @@ const MovieDetail = () => {
             </div>
 
             {/* Overview */}
-            <div className="movie-overview" data-aos="fade-up" data-aos-delay="800">
+            <div className="movie-overview" data-aos="fade-up" data-aos-delay="180">
               <h3>Overview</h3>
               <p>{overview}</p>
             </div>
 
             {/* Cast */}
             {topCast.length > 0 && (
-              <div className="movie-cast" data-aos="fade-up" data-aos-delay="900">
+              <div className="movie-cast" data-aos="fade-up" data-aos-delay="200">
                 <h3>Top Cast</h3>
                 <div className="cast-list">
                   {topCast.map((actor) => (
@@ -201,26 +223,18 @@ const MovieDetail = () => {
               </div>
             )}
 
-            {/* Trailer */}
+            {/* Trailer Video Player */}
             {trailer && (
-              <div className="movie-trailer" data-aos="zoom-in" data-aos-delay="1000">
-                <a
-                  href={`https://www.youtube.com/watch?v=${trailer.key}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="trailer-button"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                  Watch Trailer
-                </a>
+              <div className="movie-trailer" data-aos="zoom-in" data-aos-delay="250">
+                <h3>Watch Trailer</h3>
+                <div className="video-container">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${trailer.key}`}
+                    title={`${title} Trailer`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
               </div>
             )}
           </div>

@@ -26,6 +26,9 @@ const MoviesCard = ({
         }
         alt={title}
         loading="lazy"
+        onError={(e) => {
+          e.target.src = "/no-movie.png";
+        }}
       />
       <div className="mt-4" />
       <h3 className="text-white font-semibold text-lg">{title}</h3>

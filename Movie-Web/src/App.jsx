@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { FreeMode } from "swiper/modules";
+import "swiper/css";
+
+import "swiper/css/free-mode";
 import Search from "./components/Search.jsx";
 import Spinner from "./components/Spinner.jsx";
 import MoviesCard from "./components/MoviesCard.jsx";
@@ -132,8 +137,15 @@ const App = () => {
               data-aos="fade-up"
               data-aos-delay="200"
             >
-              <span className="text-red-400">Next-Gen</span> Movie Interface
+              <span className="text-red-400 underline">Dimm's</span> Movie Interface
             </h1>
+            <p
+              className="text-light-200 text-xl mt-3 text-center"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <span className="text-red-400 font-semibold">Up to date</span> movies info only in here
+            </p>
             <div data-aos="fade-up" data-aos-delay="400">
               <Search searchWeb={searchWeb} setSearchWeb={setSearchWeb} />
             </div>
@@ -148,22 +160,26 @@ const App = () => {
           {trendingMovies.length > 0 && (
             <section className="trending">
               <h2 data-aos="fade-right">Trending Movies</h2>
-              <ul>
-                {/* Original items */}
+              <Swiper
+                modules={[FreeMode]}
+                spaceBetween={20}
+                slidesPerView="auto"
+                freeMode={true}
+                grabCursor={true}
+                className="trending-swiper"
+              >
                 {trendingMovies.map((movie, index) => (
-                  <TrendingCard key={movie.id} movie={movie} index={index} />
+                  <SwiperSlide key={movie.id} style={{ width: "auto" }}>
+                    <TrendingCard movie={movie} index={index} />
+                  </SwiperSlide>
                 ))}
-                {/* Duplicated items for seamless loop */}
-                {trendingMovies.map((movie, index) => (
-                  <TrendingCard key={`dup-${movie.id}`} movie={movie} index={index} />
-                ))}
-              </ul>
+              </Swiper>
             </section>
           )}
 
           {/* All Movies Section */}
           <section className="all-movies">
-            <h2 className="mt-15" data-aos="fade-right">
+            <h2 data-aos="fade-right">
               All Movies
             </h2>
             {isLoading ? (
