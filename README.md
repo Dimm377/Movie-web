@@ -1,20 +1,16 @@
-# 🎬 Dimm's Movie Interface
+# Dimm's Movie Interface
 
 A modern, responsive movie discovery web app built with React and TMDB API.
 
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
-![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)
-![TailwindCSS](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss)
+## Features
 
-## ✨ Features
+- **Real-time Search** — Find movies instantly with debounced search
+- **Trending Section** — Swipeable carousel of trending movies
+- **Movie Details** — View complete info with trailers
+- **Modern UI** — Smooth animations with AOS
+- **Responsive** — Works on all devices
 
-- 🔍 **Real-time Search** — Find movies instantly with debounced search
-- 🔥 **Trending Section** — Swipeable carousel of trending movies
-- 📄 **Movie Details** — View complete info with trailers
-- 🎨 **Modern UI** — Smooth animations with AOS
-- 📱 **Responsive** — Works on all devices
-
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Install dependencies
@@ -27,11 +23,11 @@ VITE_TMDB_API_KEY=your_api_key_here
 npm run dev
 ```
 
-## 🔑 API Key
+## API Key
 
-Get your free API key  [TMDB](https://www.themoviedb.org/settings/api)
+Get your free API key at [TMDB](https://www.themoviedb.org/settings/api)
 
-## 📁 Structure
+## Project Structure
 
 ```
 src/
@@ -42,7 +38,7 @@ src/
 └── assets/         # Images & static files
 ```
 
-## 🛠️ Built With
+## Built With
 
 - [React](https://react.dev) — UI Library
 - [Vite](https://vitejs.dev) — Build Tool
@@ -52,3 +48,4 @@ src/
 
 ---
 
+Made by [Dimm377](https://github.com/Dimm377)
