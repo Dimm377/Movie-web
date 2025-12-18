@@ -13,17 +13,7 @@ import TrendingCard from "./components/TrendingCard.jsx";
 import heroImage from "./assets/hero.png";
 import heroBg from "./assets/hero-bg.png";
 import { useDebounce } from "react-use";
-
-const API_BASE_URL = "https://api.themoviedb.org/3";
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-
-const API_OPTIONS = {
-  method: "GET",
-  headers: {
-    accept: "application/json",
-    Authorization: `Bearer ${API_KEY}`,
-  },
-};
+import { API_BASE_URL, API_OPTIONS } from "./utils/api.js";
 
 const App = () => {
   const [searchWeb, setSearchWeb] = useState("");
@@ -79,13 +69,13 @@ const App = () => {
         : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
       const response = await fetch(endpoint, API_OPTIONS);
       if (!response.ok) {
-        throw new Error("Network respon mati");
+        throw new Error("Network response failed");
       }
       const data = await response.json();
       if (data.results) {
         console.log("Fetched movies:", data.results);
       } else {
-        setErrorMessage("gada movie yang ditemukan");
+        setErrorMessage("No movies found");
         setMovieList([]);
         return;
       }
