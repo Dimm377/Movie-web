@@ -1,0 +1,114 @@
+/* Search Component Styles */
+
+.search {
+  @apply w-full bg-light-100/5 px-4 py-3 rounded-lg mt-10 max-w-3xl mx-auto;
+  position: relative;
+
+  & div {
+    @apply relative flex items-center;
+  }
+
+  & img {
+    @apply absolute left-2 h-5 w-5;
+  }
+
+  & input {
+    @apply w-full bg-transparent py-2 sm:pr-10 pl-10 text-base text-gray-200 placeholder-light-200 outline-hidden;
+  }
+}
+
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(15, 13, 35, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 0.75rem;
+  margin-top: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 50;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 640px) {
+  .search-suggestions {
+    max-height: 400px;
+  }
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .suggestion-item {
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+}
+
+.suggestion-item:hover {
+  background: rgba(206, 206, 251, 0.1);
+}
+
+.suggestion-item img {
+  width: 32px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 0.25rem;
+  position: static;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .suggestion-item img {
+    width: 40px;
+    height: 60px;
+  }
+}
+
+.suggestion-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.suggestion-title {
+  color: white;
+  font-weight: 500;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 640px) {
+  .suggestion-title {
+    font-size: 0.9rem;
+  }
+}
+
+.suggestion-year {
+  color: #9ca4ab;
+  font-size: 0.7rem;
+}
+
+@media (min-width: 640px) {
+  .suggestion-year {
+    font-size: 0.8rem;
+  }
+}
+
+.suggestion-loading,
+.suggestion-empty {
+  padding: 1rem;
+  text-align: center;
+  color: #9ca4ab;
+  font-size: 0.85rem;
+}

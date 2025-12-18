@@ -1,0 +1,71 @@
+/* Movie Card Styles */
+
+.all-movies {
+  @apply space-y-4;
+
+  & ul {
+    @apply grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+  }
+}
+
+.movie-card {
+  @apply bg-dark-100 p-5 rounded-2xl;
+  transition: all 0.5s ease-out;
+  overflow: hidden;
+  cursor: pointer;
+  display: block;
+  outline: none;
+  text-decoration: none;
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+
+  & img {
+    @apply rounded-lg h-auto w-full;
+    transition: transform 0.5s ease-out;
+  }
+
+  &:hover img {
+    transform: scale(1.08);
+  }
+
+  & h3 {
+    @apply text-white font-bold text-base line-clamp-1;
+  }
+
+  & .content {
+    @apply mt-2 flex flex-row items-center flex-wrap gap-2;
+  }
+
+  & .rating {
+    @apply flex flex-row gap-1 items-center;
+  }
+
+  &:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6),
+                0 0 25px rgba(255, 255, 255, 0.15);
+  }
+
+  & .rating img {
+    @apply size-4 object-contain;
+  }
+
+  & .rating p {
+    @apply font-bold text-base text-white;
+  }
+
+  & .content span {
+    @apply text-sm text-gray-100;
+  }
+
+  & .content .lang {
+    @apply capitalize text-gray-100 font-medium text-base;
+  }
+
+  & .content .year {
+    @apply text-gray-100 font-medium text-base;
+  }
+}

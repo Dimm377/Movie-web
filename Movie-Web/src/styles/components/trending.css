@@ -1,0 +1,107 @@
+/* Trending Section Styles */
+
+.trending {
+  @apply mt-10;
+  overflow: visible;
+
+  & h2 {
+    margin-bottom: 1rem;
+  }
+}
+
+.trending-swiper {
+  overflow: visible !important;
+  padding: 0 50px;
+  position: relative;
+}
+
+.trending-swiper .swiper-slide {
+  width: auto;
+}
+
+/* Navigation Arrows */
+.trending-swiper .swiper-button-prev,
+.trending-swiper .swiper-button-next {
+  background: rgba(0, 0, 0, 0.7);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.trending-swiper .swiper-button-prev:hover,
+.trending-swiper .swiper-button-next:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.trending-swiper .swiper-button-prev::after,
+.trending-swiper .swiper-button-next::after {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.trending-swiper .swiper-button-prev {
+  left: 0;
+}
+
+.trending-swiper .swiper-button-next {
+  right: 0;
+}
+
+.trending-swiper .swiper-button-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Trending Card Link */
+.trending-card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  text-decoration: none;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.trending-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+.trending-card .poster-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: -0.875rem;
+}
+
+.trending-card .poster-container img {
+  width: 127px;
+  height: 163px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.trending-card:hover .poster-container img {
+  transform: scale(1.05);
+}
+
+.trending-card .poster-title {
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 0.5rem;
+  max-width: 127px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.trending-card:hover .poster-title {
+  opacity: 1;
+}
