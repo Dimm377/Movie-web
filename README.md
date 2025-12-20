@@ -27,16 +27,6 @@ npm run dev
 
 Get your free API key at [TMDB](https://www.themoviedb.org/settings/api)
 
-## Project Structure
-
-```
-src/
-├── components/     # Reusable UI components
-├── pages/          # Page components
-├── styles/         # CSS modules
-├── utils/          # API config & helpers
-└── assets/         # Images & static files
-```
 
 ## Built With
 
@@ -46,6 +36,4 @@ src/
 - [Swiper](https://swiperjs.com) — Carousel
 - [AOS](https://michalsnik.github.io/aos/) — Scroll Animations
 
----
 
-Made by [Dimm377](https://github.com/Dimm377)
