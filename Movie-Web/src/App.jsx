@@ -157,7 +157,8 @@ const App = () => {
               data-aos="fade-up"
               data-aos-delay="200"
             >
-              <span className="text-red-400 underline">Dimm</span> Website
+              <span className="text-red-400 underline">Dimm</span> Movie
+              Website
             </h1>
             <p
               className="text-light-200 text-xl mt-3 text-center"
