@@ -42,6 +42,8 @@
 
   main {
     @apply min-h-screen relative bg-primary;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   header {
@@ -80,5 +82,6 @@
 
   .wrapper {
     @apply px-5 py-12 xs:p-10 max-w-7xl mx-auto flex flex-col relative z-10;
+    overflow-x: hidden;
   }
 }

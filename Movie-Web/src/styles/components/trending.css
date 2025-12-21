@@ -2,7 +2,7 @@
 
 .trending {
   @apply mt-10;
-  overflow: visible;
+  overflow: hidden;
 
   & h2 {
     margin-bottom: 1rem;
@@ -10,8 +10,8 @@
 }
 
 .trending-swiper {
-  overflow: visible !important;
-  padding: 0 50px;
+  overflow: hidden !important;
+  padding: 0 10px;
   position: relative;
 }
 
