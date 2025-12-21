@@ -74,7 +74,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: -0.875rem;
+  margin-left: 0;
+  padding: 0 10px;
 }
 
 .trending-card .poster-container img {
