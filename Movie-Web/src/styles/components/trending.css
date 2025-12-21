@@ -3,7 +3,7 @@
 .trending {
   @apply mt-10;
   overflow: hidden;
-  padding-top: 30px;
+  padding-top: 50px;
 
   & h2 {
     margin-bottom: 1rem;
