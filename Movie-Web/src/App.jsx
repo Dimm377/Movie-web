@@ -157,7 +157,7 @@ const App = () => {
               data-aos="fade-up"
               data-aos-delay="200"
             >
-              <span className="text-red-400 underline">Dimm's</span> Movie
+              <span className="text-red-400 underline">Dimm</span> Movie
               Interface
             </h1>
             <p
@@ -208,7 +208,7 @@ const App = () => {
               <p className="text-red-500">{errorMessage}</p>
             ) : movieList.length === 0 ? (
               <p className="text-white">
-                No movies found. Check console for errors.
+                No movies found. 404
               </p>
             ) : (
               <ul>
