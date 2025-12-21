@@ -1,4 +1,4 @@
-# Dimm's Movie Interface
+# Dimm Movie Interface
 
 A modern, responsive movie discovery web app built with React and TMDB API.
 
