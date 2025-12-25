@@ -5,7 +5,6 @@ A modern, responsive movie discovery web app built with React and TMDB API.
 ## Features
 
 - **Real-time Search** — Find movies instantly with debounced search
-- **Trending Section** — Swipeable carousel of trending movies
 - **Movie Details** — View complete info with trailers
 - **Modern UI** — Smooth animations with AOS
 - **Responsive** — Works on all devices
