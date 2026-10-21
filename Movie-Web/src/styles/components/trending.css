@@ -30,7 +30,7 @@
   height: 44px;
   border-radius: 50%;
   color: white;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .trending-swiper .swiper-button-prev:hover,

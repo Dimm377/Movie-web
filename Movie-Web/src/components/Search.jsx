@@ -1,45 +1,61 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-import { API_BASE_URL, API_OPTIONS } from "../utils/api.js";
+import { Link, useNavigate } from "react-router-dom";
+import { movieService } from "../utils/api.js";
+import { useDebounce } from "../hooks/useDebounce.js";
 
 const Search = ({ searchWeb, setSearchWeb }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchRef = useRef(null);
+  const navigate = useNavigate();
 
-  // Fetch suggestions when user types
+  const debouncedQuery = useDebounce(searchWeb, 300);
+
+  // Fetch suggestions when debounced query changes
   useEffect(() => {
+    let isCancelled = false;
+
     const fetchSuggestions = async () => {
-      if (searchWeb.length < 2) {
+      const query = debouncedQuery?.trim();
+      if (!query || query.length < 2) {
         setSuggestions([]);
+        setSelectedIndex(-1);
         return;
       }
 
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/search/movie?query=${encodeURIComponent(searchWeb)}&page=1`,
-          API_OPTIONS
-        );
-        const data = await response.json();
-        setSuggestions(data.results?.slice(0, 6) || []);
+        const results = await movieService.search(query, 1);
+        if (!isCancelled) {
+          setSuggestions(results.slice(0, 6));
+          setSelectedIndex(-1);
+        }
       } catch (error) {
-        console.error("Error fetching suggestions:", error);
+        if (!isCancelled) {
+          console.error("Error fetching suggestions:", error);
+          setSuggestions([]);
+        }
       } finally {
-        setIsLoading(false);
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
       }
     };
 
-    const debounce = setTimeout(fetchSuggestions, 300);
-    return () => clearTimeout(debounce);
-  }, [searchWeb]);
+    fetchSuggestions();
+    return () => {
+      isCancelled = true;
+    };
+  }, [debouncedQuery]);
 
   // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSuggestions(false);
+        setSelectedIndex(-1);
       }
     };
 
@@ -49,33 +65,84 @@ const Search = ({ searchWeb, setSearchWeb }) => {
 
   const handleSuggestionClick = () => {
     setShowSuggestions(false);
+    setSelectedIndex(-1);
     setSearchWeb("");
+  };
+
+  const handleKeyDown = (event) => {
+    if (!showSuggestions || suggestions.length === 0) {
+      if (event.key === "Escape") {
+        setShowSuggestions(false);
+      }
+      return;
+    }
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (event.key === "Enter" && selectedIndex >= 0 && selectedIndex < suggestions.length) {
+      event.preventDefault();
+      const selectedMovie = suggestions[selectedIndex];
+      setShowSuggestions(false);
+      setSelectedIndex(-1);
+      setSearchWeb("");
+      navigate(`/movie/${selectedMovie.id}`);
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      setShowSuggestions(false);
+      setSelectedIndex(-1);
+    }
   };
 
   return (
     <div className="search text-white" ref={searchRef}>
       <div>
-        <img src="search.svg" alt="" />
+        <img src="/search.svg" alt="" aria-hidden="true" />
         <input
-          type="text"
+          type="search"
+          role="combobox"
+          aria-expanded={showSuggestions && suggestions.length > 0}
+          aria-autocomplete="list"
+          aria-controls="search-suggestions-list"
+          aria-activedescendant={
+            selectedIndex >= 0 && suggestions[selectedIndex]
+              ? `suggestion-${suggestions[selectedIndex].id}`
+              : undefined
+          }
+          aria-label="Search movies"
           placeholder="Search your favorite movies"
           value={searchWeb}
-          onChange={(event) => setSearchWeb(event.target.value)}
+          onChange={(event) => {
+            setSearchWeb(event.target.value);
+            setShowSuggestions(true);
+          }}
           onFocus={() => setShowSuggestions(true)}
+          onKeyDown={handleKeyDown}
         />
       </div>
 
       {/* Suggestions Dropdown */}
-      {showSuggestions && searchWeb.length >= 2 && (
-        <div className="search-suggestions">
+      {showSuggestions && searchWeb.trim().length >= 2 && (
+        <div
+          id="search-suggestions-list"
+          className="search-suggestions"
+          role="listbox"
+          aria-label="Movie search suggestions"
+        >
           {isLoading ? (
             <div className="suggestion-loading">Searching...</div>
           ) : suggestions.length > 0 ? (
-            suggestions.map((movie) => (
+            suggestions.map((movie, index) => (
               <Link
                 key={movie.id}
+                id={`suggestion-${movie.id}`}
                 to={`/movie/${movie.id}`}
-                className="suggestion-item"
+                className={`suggestion-item ${index === selectedIndex ? "active-suggestion" : ""}`}
+                role="option"
+                aria-selected={index === selectedIndex}
                 onClick={handleSuggestionClick}
               >
                 <img
@@ -85,6 +152,9 @@ const Search = ({ searchWeb, setSearchWeb }) => {
                       : "/no-movie.png"
                   }
                   alt={movie.title}
+                  onError={(e) => {
+                    e.currentTarget.src = "/no-movie.png";
+                  }}
                 />
                 <div className="suggestion-info">
                   <p className="suggestion-title">{movie.title}</p>

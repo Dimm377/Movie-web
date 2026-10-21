@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 450" width="300" height="450">
+  <rect width="300" height="450" fill="#0f0d23"/>
+  <circle cx="150" cy="180" r="58" fill="#cecefb" opacity="0.3"/>
+  <path d="M75 350 C75 270, 225 270, 225 350 Z" fill="#cecefb" opacity="0.3"/>
+  <text x="150" y="390" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#a8b5db" text-anchor="middle" letter-spacing="1">NO PHOTO</text>
+</svg>

@@ -10,28 +10,34 @@ import Search from "./components/Search.jsx";
 import Spinner from "./components/Spinner.jsx";
 import MoviesCard from "./components/MoviesCard.jsx";
 import TrendingCard from "./components/TrendingCard.jsx";
-import heroImage from "./assets/hero.png";
-import heroBg from "./assets/hero-bg.png";
-import { useDebounce } from "react-use";
-import { API_BASE_URL, API_OPTIONS } from "./utils/api.js";
+import heroImage from "./assets/hero.webp";
+import heroBg from "./assets/hero-bg.webp";
+import { useDebounce } from "./hooks/useDebounce.js";
+import { movieService } from "./utils/api.js";
 
 const App = () => {
   const [searchWeb, setSearchWeb] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [movieList, setMovieList] = useState([]);
   const [trendingMovies, setTrendingMovies] = useState([]);
-  const [isLoading, setisLoading] = useState(false);
-  const [debounceSearchWeb, setDebounceSearchWeb] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [showGithub, setShowGithub] = useState(true);
 
-  // Initialize AOS
+  const debouncedSearch = useDebounce(searchWeb, 500);
+
+  // Initialize AOS with motion sensitivity check
   useEffect(() => {
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     AOS.init({
-      duration: 800,
+      duration: prefersReducedMotion ? 0 : 800,
       easing: "ease-out-cubic",
       once: false,
       mirror: true,
       offset: 50,
+      disable: prefersReducedMotion,
     });
   }, []);
 
@@ -51,54 +57,34 @@ const App = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // No JS animation needed - using CSS marquee animation
-
-  useDebounce(
-    () => {
-      setDebounceSearchWeb(searchWeb);
-    },
-    500,
-    [searchWeb]
-  );
-
   const fetchMovies = async (query = "") => {
-    setisLoading(true);
+    setIsLoading(true);
     setErrorMessage("");
     try {
-      const endpoint = query
-        ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
-        : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
-      const response = await fetch(endpoint, API_OPTIONS);
-      if (!response.ok) {
-        throw new Error("Network response failed");
-      }
-      const data = await response.json();
-      if (data.results) {
-        console.log("Fetched movies:", data.results);
-      } else {
-        setErrorMessage("No movies found");
-        setMovieList([]);
-        return;
-      }
+      const results = query
+        ? await movieService.search(query)
+        : await movieService.getDiscover();
 
-      setMovieList(data.results || []);
+      if (!results || results.length === 0) {
+        if (query) {
+          setErrorMessage(`No movies found for "${query}"`);
+        }
+        setMovieList([]);
+      } else {
+        setMovieList(results);
+      }
     } catch (error) {
       console.error("Error fetching movies:", error);
-      setErrorMessage("Failed to fetch movies. Please try again later.");
+      setErrorMessage("Failed to fetch movies. Please check your connection or TMDB API key.");
     } finally {
-      setisLoading(false);
+      setIsLoading(false);
     }
   };
 
   const fetchTrendingMovies = async () => {
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/trending/movie/week`,
-        API_OPTIONS
-      );
-      if (!response.ok) throw new Error("Failed to fetch trending movies");
-      const data = await response.json();
-      setTrendingMovies(data.results?.slice(0, 5) || []);
+      const movies = await movieService.getTrending("week", 5);
+      setTrendingMovies(movies);
     } catch (error) {
       console.error("Error fetching trending movies:", error);
     }
@@ -109,11 +95,11 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    fetchMovies(debounceSearchWeb);
-  }, [debounceSearchWeb]);
+    fetchMovies(debouncedSearch);
+  }, [debouncedSearch]);
 
   return (
-    <main className="min-h-screen bg-primary">
+    <main className="min-h-dvh bg-primary">
       {/* Hero Section with background */}
       <div
         className="min-h-[60vh] w-full"
@@ -211,9 +197,11 @@ const App = () => {
                 No movies found. 404
               </p>
             ) : (
-              <ul>
+              <ul role="list">
                 {movieList.map((movie, index) => (
-                  <MoviesCard key={movie.id} movie={movie} index={index} />
+                  <li key={movie.id} className="h-full list-none">
+                    <MoviesCard movie={movie} index={index} />
+                  </li>
                 ))}
               </ul>
             )}

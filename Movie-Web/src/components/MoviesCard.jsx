@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { movieService } from "../utils/api.js";
 
 const MoviesCard = ({
   movie: {
@@ -19,15 +20,11 @@ const MoviesCard = ({
       data-aos-delay={index < 8 ? index * 50 : 0}
     >
       <img
-        src={
-          poster_path
-            ? `https://image.tmdb.org/t/p/w500${poster_path}`
-            : "/no-movie.png"
-        }
+        src={movieService.getImageUrl(poster_path, "w500")}
         alt={title}
         loading="lazy"
         onError={(e) => {
-          e.target.src = "/no-movie.png";
+          e.currentTarget.src = "/no-movie.png";
         }}
       />
       <div className="mt-4" />

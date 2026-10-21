@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { movieService } from "../utils/api.js";
 
 const TrendingCard = ({ movie, index }) => {
   const { id, title, poster_path } = movie;
@@ -10,18 +11,14 @@ const TrendingCard = ({ movie, index }) => {
       data-aos-delay={index * 100}
     >
       <Link to={`/movie/${id}`} className="trending-card">
-        <p className="fancy-text">{index + 1}</p>
+        <p className="fancy-text" aria-label={`Trending rank #${index + 1}`}>{index + 1}</p>
         <div className="poster-container">
           <img
-            src={
-              poster_path
-                ? `https://image.tmdb.org/t/p/w500${poster_path}`
-                : "/no-movie.png"
-            }
+            src={movieService.getImageUrl(poster_path, "w500")}
             alt={title}
             loading="lazy"
             onError={(e) => {
-              e.target.src = "/no-movie.png";
+              e.currentTarget.src = "/no-movie.png";
             }}
           />
           <h4 className="poster-title">{title}</h4>
